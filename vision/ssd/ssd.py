@@ -29,10 +29,12 @@ class SSD(nn.Module):
         # register layers in source_layer_indexes by adding them to a module list
         self.source_layer_add_ons = nn.ModuleList([t[1] for t in source_layer_indexes
                                                    if isinstance(t, tuple) and not isinstance(t, GraphPath)])
-        if device:
+
+        self.device = next(base_net.parameters()).device
+        if device is not None:
             self.device = device
-        else:
-            self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            self.base_net.to(device)
+
         if is_test:
             self.config = config
             self.priors = config.priors.to(self.device)

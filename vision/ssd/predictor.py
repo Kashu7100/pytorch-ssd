@@ -20,8 +20,8 @@ class Predictor:
             self.device = device
         else:
             self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
         self.net.to(self.device)
+
         self.net.eval()
 
         self.timer = Timer()
@@ -31,10 +31,10 @@ class Predictor:
         height, width, _ = image.shape
         image = self.transform(image)
         images = image.unsqueeze(0)
-        images = images.to(self.device)
+        images.to(self.device)
         with torch.no_grad():
             self.timer.start()
-            scores, boxes = self.net.forward(images)
+            scores, boxes = self.net(images)
             print("Inference time: ", self.timer.end())
         boxes = boxes[0]
         scores = scores[0]
